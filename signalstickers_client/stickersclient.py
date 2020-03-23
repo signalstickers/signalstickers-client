@@ -20,20 +20,19 @@
       or what we reproduce on signalstickers.com .
 
 
-    Please do not spam the Signal API (so don't put this code in a `while True` loop).
+    Please do not flood the Signal API (so don't put this code in a `while True` loop).
 
     Author: Romain RICARD <contact+stickerclient@romainricard.fr>
     License: LGPLv3
 """
 
 from binascii import unhexlify
+from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes, hmac
-from cryptography.hazmat.primitives.kdf.hkdf import HKDF
 from cryptography.hazmat.primitives.ciphers import Cipher
 from cryptography.hazmat.primitives.ciphers.algorithms import AES
 from cryptography.hazmat.primitives.ciphers.modes import CBC
-
-from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives.kdf.hkdf import HKDF
 from urllib import request
 
 
