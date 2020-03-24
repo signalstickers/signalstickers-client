@@ -238,11 +238,11 @@ class PackProtobuf:
         we know (`StickerPack` and `Sticker`)
         """
         #  Title
-        if item_field_id == 1 and not embedded_item:
+        if item_field_id == 1 and not embedded_item and not self.pack.title:
             self.pack.title = item_data.decode("utf-8")
 
         # Author
-        elif item_field_id == 2 and not embedded_item:
+        elif item_field_id == 2 and not embedded_item and not self.pack.author:
             self.pack.author = item_data.decode("utf-8")
 
         # Cover

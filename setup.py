@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="signalstickers-client",
-    version="1.0.0",
+    version="1.0.5",
     author="Romain Ricard",
     author_email="contact+stickerclient@romainricard.fr",
     description="A client for the Signal stickers API",
