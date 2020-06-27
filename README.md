@@ -4,6 +4,7 @@ A client to interact with the [Signal](https://signal.org/) stickers API.
 
 + Fetch sticker packs
 + Get images files
++ Upload sticker packs
 + etc.
 
 
@@ -19,11 +20,12 @@ A client to interact with the [Signal](https://signal.org/) stickers API.
 pip install --user signalstickers-client
 ```
 
-This module requires `cryptography` (but it should be installed with the
-previous command).
+This module requires `cryptography`, `protobuf` and `requests` (but they should
+be installed with the previous command).
  
 ## Usage
 
+### Downloading a pack
 The `StickerPack` object returned by `StickersClient().get_pack(<pack_id>,
 <pack_key>)` exposes the following attributes:
 
@@ -44,7 +46,15 @@ A `Sticker` object exposes the following attributes:
 + `image_data` (bytes): the webp image of the sticker.
 
 
+### Uploading a pack
+
+Same think, but use `LocakStickerPack` (that does not contains `id` and `key`)
+instead of `StickerPack`.
+
 ## Example usage
+
+### Downloading a pack
+
 
 ```python
 import os
@@ -72,6 +82,52 @@ for sticker in pack.stickers:
         sticker_f.write(sticker.image_data)
 
 ```
+
+### Uploading a pack
+
+```python
+from signalstickers_client import StickersClient
+from signalstickers_client.models import LocalStickerPack, Sticker
+
+
+pack = LocalStickerPack()
+pack.title = 'Hello world!'
+pack.author = "Romain Ricard"
+
+# Add stickers
+stick1 = Sticker()
+stick1.id = 0
+stick1.emoji = "🤪"
+
+with open("/tmp/webp/1.webp", "rb") as f1:
+    # You can also set image_data directly from bytes
+    stick1.image_data = f1.read()
+
+
+pack._addsticker(stick1)
+
+stick2 = Sticker()
+stick2.id = 1
+stick2.emoji = "🐻"
+
+with open("/tmp/webp/2.webp", "rb") as f2:
+    stick2.image_data = f2.read()
+
+pack._addsticker(stick2)
+
+
+# Instanciate the client with your Signal crendentials
+client = StickersClient("YOUR_SIGNAL_USER", "YOUR_SIGNAL_PASS")
+
+# Upload the pack
+pack_id, pack_key = client.upload_pack(pack)
+
+print("Pack uploaded!\n\nhttps://signal.art/addstickers/#pack_id={}&pack_key={}".format(pack_id, pack_key))
+```
+
+> How to obtain Signal credentials? Well, that's the hard part. Read this [blog
+> post by x0rz](https://blog.0day.rocks/a-look-into-signals-encrypted-profiles-5491908186c1)
+> to find out.
 
 
 ## License

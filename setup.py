@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="signalstickers-client",
-    version="1.0.5",
+    version="2.0.0",
     author="Romain Ricard",
     author_email="contact+stickerclient@romainricard.fr",
     description="A client for the Signal stickers API",
@@ -15,6 +15,8 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     install_requires=[
         'cryptography',
+        'protobuf',
+        'requests'
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
