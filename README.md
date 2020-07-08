@@ -55,7 +55,6 @@ instead of `StickerPack`.
 
 ### Downloading a pack
 
-
 ```python
 import os
 from signalstickers_client import StickersClient
@@ -125,9 +124,11 @@ pack_id, pack_key = client.upload_pack(pack)
 print("Pack uploaded!\n\nhttps://signal.art/addstickers/#pack_id={}&pack_key={}".format(pack_id, pack_key))
 ```
 
-> How to obtain Signal credentials? Well, that's the hard part. Read this [blog
-> post by x0rz](https://blog.0day.rocks/a-look-into-signals-encrypted-profiles-5491908186c1)
-> to find out.
+> **How to obtain your Signal credentials?**
+> In Signal Desktop, open the Developer
+> Tools, and type `window.reduxStore.getState().items.uuid_id` to get your USER,
+> and `window.reduxStore.getState().items.password` to get your PASSWORD.
+
 
 
 ## License
