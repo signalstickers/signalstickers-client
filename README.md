@@ -48,7 +48,7 @@ A `Sticker` object exposes the following attributes:
 
 ### Uploading a pack
 
-Same think, but use `LocakStickerPack` (that does not contains `id` and `key`)
+Same thing, but use `LocalStickerPack` (that does not contains `id` and `key`)
 instead of `StickerPack`.
 
 ## Example usage
