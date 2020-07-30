@@ -89,30 +89,25 @@ from signalstickers_client import StickersClient
 from signalstickers_client.models import LocalStickerPack, Sticker
 
 
+def add_sticker(path, emoji):
+
+    stick = Sticker()
+    stick.id = len(pack.stickers)
+    stick.emoji = emoji
+
+    with open(path, "rb") as f_in:
+        stick.image_data = f_in.read()
+
+    pack._addsticker(stick)
+
+
 pack = LocalStickerPack()
 pack.title = 'Hello world!'
 pack.author = "Romain Ricard"
 
-# Add stickers
-stick1 = Sticker()
-stick1.id = 0
-stick1.emoji = "🤪"
-
-with open("/tmp/webp/1.webp", "rb") as f1:
-    # You can also set image_data directly from bytes
-    stick1.image_data = f1.read()
-
-
-pack._addsticker(stick1)
-
-stick2 = Sticker()
-stick2.id = 1
-stick2.emoji = "🐻"
-
-with open("/tmp/webp/2.webp", "rb") as f2:
-    stick2.image_data = f2.read()
-
-pack._addsticker(stick2)
+# For now, the first sticker will be the cover
+add_sticker("/tmp/1.webp", "🤪")
+add_sticker("/tmp/2.webp", "🐻")
 
 
 # Instanciate the client with your Signal crendentials

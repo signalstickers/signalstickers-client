@@ -14,7 +14,6 @@ class LocalStickerPack:
     def __init__(self):
         self.title = None
         self.author = None
-        self.cover = None
         self.stickers = []
 
     @property
@@ -29,6 +28,10 @@ class LocalStickerPack:
         manifest = protobuf_stickers.Pack()
         manifest.title = self.title
         manifest.author = self.author
+        
+        # For now, add the first sticker as the cover
+        cover = manifest.cover
+        cover.id = 0
 
         for sticker in self.stickers:
             sticker_manifest = manifest.stickers.add()
