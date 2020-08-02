@@ -15,6 +15,7 @@ class LocalStickerPack:
         self.title = None
         self.author = None
         self.stickers = []
+        self.cover = None
 
     @property
     def nb_stickers(self):
@@ -24,14 +25,26 @@ class LocalStickerPack:
         return len(self.stickers)
 
     @property
+    def nb_stickers_with_cover(self):
+        """
+        Return the number of stickers in the pack, including the cover
+        """
+        return len(self.stickers) + 1 if self.cover else len(self.stickers)
+
+    @property
     def manifest(self):
         manifest = protobuf_stickers.Pack()
         manifest.title = self.title
         manifest.author = self.author
         
-        # For now, add the first sticker as the cover
         cover = manifest.cover
-        cover.id = 0
+        
+        if self.cover:
+            cover.id = self.cover.id
+            cover.emoji = ""
+        else:
+            # Take the first sticker as the cover
+            cover.id = 0
 
         for sticker in self.stickers:
             sticker_manifest = manifest.stickers.add()

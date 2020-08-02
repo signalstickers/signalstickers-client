@@ -24,7 +24,7 @@ def upload_pack(pack, signal_user, signal_password):
     # - "Hey, I'm {USER} and I'd like to upload {nb_stickers} stickers"
     # - "Hey, no problem, here are your credentials for uploading content"
     register_req = requests.get(SERVICE_STICKER_FORM_URL.format(
-        nb_stickers=pack.nb_stickers), auth=(signal_user, signal_password), verify=CACERT_PATH)
+        nb_stickers=pack.nb_stickers_with_cover), auth=(signal_user, signal_password), verify=CACERT_PATH)
 
     if register_req.status_code == 401:
         raise RuntimeError("Invalid authentication")
@@ -32,7 +32,6 @@ def upload_pack(pack, signal_user, signal_password):
         # Yes, it comes faster than you'll expect
         raise RuntimeError(
             "Service rate limit exceeded, please try again later.")
-
     pack_attrs = register_req.json()
 
     # Encrypt the manifest
@@ -50,8 +49,12 @@ def upload_pack(pack, signal_user, signal_password):
     _upload_cdn(pack_attrs["manifest"], encrypted_manifest)
 
     # Upload each sticker
+    stickers_list = pack.stickers
 
-    for sticker in pack.stickers:
+    if pack.cover:
+        stickers_list.append(pack.cover)
+
+    for sticker in stickers_list:
         # Encrypt the sticker
         encrypted_sticker = encrypt(
             plaintext=sticker.image_data,
