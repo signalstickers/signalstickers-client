@@ -105,8 +105,9 @@ pack = LocalStickerPack()
 pack.title = 'Hello world!'
 pack.author = "Romain Ricard"
 
+# webp or GIF, for animated stickers!
 add_sticker("/tmp/1.webp", "🤪")
-add_sticker("/tmp/2.webp", "🐻")
+add_sticker("/tmp/2.gif", "🐻")
 
 # Specifying a cover is optionnal
 # By default, the first sticker is the cover
