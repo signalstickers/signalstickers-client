@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="signalstickers-client",
-    version="2.0.2",
+    version="2.0.3",
     author="Romain Ricard",
     author_email="contact+stickerclient@romainricard.fr",
     description="A client for the Signal stickers API",
@@ -25,5 +25,8 @@ setuptools.setup(
         "Topic :: Communications :: Chat"
     ],
     python_requires='>=3.6',
+    package_data = {
+    'signalstickers_client': ['utils/ca/cacert.pem']
+}
 )
 
