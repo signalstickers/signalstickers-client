@@ -53,6 +53,8 @@ instead of `StickerPack`.
 
 ## Example usage
 
+_[See also `examples/`](examples/)_
+
 ### Downloading a pack
 
 ```python
