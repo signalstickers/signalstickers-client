@@ -39,7 +39,7 @@ async def _get_pack(http, pack_id, pack_key):
     a `StickerPack` object
     """
     manifest_req = await http.get(CDN_MANIFEST_URL.format(
-        pack_id=pack_id))
+        pack_id=pack_id), timeout=30.0)
     manifest_encrypted = bytes(manifest_req.content)
     manifest_proto = decrypt(manifest_encrypted, pack_key)
 
@@ -70,6 +70,7 @@ async def _get_sticker(http, sticker_id, pack_id, pack_key):
     """
     sticker_req = await http.get(
         CDN_STICKER_URL.format(pack_id=pack_id, sticker_id=sticker_id),
+        timeout=30.0,
     )
     sticker_encrypted = bytes(sticker_req.content)
     sticker = decrypt(sticker_encrypted, pack_key)

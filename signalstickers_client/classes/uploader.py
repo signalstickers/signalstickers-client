@@ -28,6 +28,7 @@ async def upload_pack(pack, signal_user, signal_password):
         register_req = await http.get(SERVICE_STICKER_FORM_URL.format(
             nb_stickers=pack.nb_stickers_with_cover),
             auth=(signal_user, signal_password),
+            timeout=30.0,
         )
 
         if register_req.status_code == 401:
@@ -91,4 +92,4 @@ async def _upload_cdn(http, cdn_creds, encrypted_data):
         'file': (None, encrypted_data, 'application/octet-stream'),
     }
 
-    await http.post(CDN_BASEURL, files=payload)
+    await http.post(CDN_BASEURL, files=payload, timeout=30.0)
