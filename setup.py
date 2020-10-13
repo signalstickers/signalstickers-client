@@ -14,10 +14,15 @@ setuptools.setup(
     url="https://github.com/romainricard/signalstickers-client",
     packages=setuptools.find_packages(),
     install_requires=[
-        'cryptography',
-        'protobuf',
-        'requests'
+        'anyio>=2.0.2,<3.0.0',
+        # temporary until asks on pypi supports anyio 2.0
+        'asks @ git+https://github.com/theelous3/asks.git'
+        'cryptography>=3.1.1,<4.0.0',
+        'protobuf>=3.13.0,<4.0.0',
     ],
+    extras_require={'dev': [
+        'pytest>=6.1.1,<7.0.0',
+    ]},
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)",
@@ -26,7 +31,6 @@ setuptools.setup(
     ],
     python_requires='>=3.6',
     package_data = {
-    'signalstickers_client': ['utils/ca/cacert.pem']
-}
+        'signalstickers_client': ['utils/ca/cacert.pem']
+    }
 )
-

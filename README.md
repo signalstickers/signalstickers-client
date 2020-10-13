@@ -20,13 +20,13 @@ A client to interact with the [Signal](https://signal.org/) stickers API.
 pip install --user signalstickers-client
 ```
 
-This module requires `cryptography`, `protobuf` and `requests` (but they should
+This module requires `cryptography`, `protobuf`, `anyio`, and `asks` (but they should
 be installed with the previous command).
  
 ## Usage
 
 ### Downloading a pack
-The `StickerPack` object returned by `StickersClient().get_pack(<pack_id>,
+The `StickerPack` object returned by `await StickersClient().get_pack(<pack_id>,
 <pack_key>)` exposes the following attributes:
 
 + `id` (string): the pack id. Equals to `pack_id`;
@@ -68,7 +68,7 @@ pack_key = "87078ee421bad8bf44092ca72166b67ae5397e943452e4300ced9367b7f6a1a1"
 
 
 client = StickersClient()
-pack = client.get_pack(pack_id, pack_key)
+pack = await client.get_pack(pack_id, pack_key)
 
 print(pack.title)  # "Friends of the Internet"
 print(pack.author)  # "Bits of Freedom"
@@ -124,7 +124,7 @@ pack.cover = cover
 client = StickersClient("YOUR_SIGNAL_USER", "YOUR_SIGNAL_PASS")
 
 # Upload the pack
-pack_id, pack_key = client.upload_pack(pack)
+pack_id, pack_key = await client.upload_pack(pack)
 
 print("Pack uploaded!\n\nhttps://signal.art/addstickers/#pack_id={}&pack_key={}".format(pack_id, pack_key))
 ```

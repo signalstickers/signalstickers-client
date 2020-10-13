@@ -1,1 +1,1 @@
-from .ca import CACERT_PATH
+from .ca import SSL_CONTEXT

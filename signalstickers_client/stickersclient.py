@@ -36,14 +36,14 @@ class StickersClient:
       self.signal_user = signal_user
       self.signal_pass = signal_pass
 
-  def get_pack(self, pack_id, pack_key):
+  async def get_pack(self, pack_id, pack_key):
       """
       Return a `StickerPack` from its id and key
       """
-      return downloader.get_pack(pack_id, pack_key)
+      return await downloader.get_pack(pack_id, pack_key)
 
-  def upload_pack(self, pack: LocalStickerPack):
+  async def upload_pack(self, pack: LocalStickerPack):
       """
       Upload a `LocalStickerPack` and return its `pack_id` and `pack_key`
       """
-      return uploader.upload_pack(pack, self.signal_user, self.signal_pass)
+      return await uploader.upload_pack(pack, self.signal_user, self.signal_pass)

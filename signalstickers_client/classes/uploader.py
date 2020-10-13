@@ -1,16 +1,17 @@
 import json
-import requests
-import urllib3
 from os import getenv
 from secrets import token_hex, token_bytes
 from uuid import uuid4
 
+import anyio
+import asks
+
 from signalstickers_client.classes.signalcrypto import encrypt, derive_key, decrypt
 from signalstickers_client.urls import SERVICE_STICKER_FORM_URL, CDN_BASEURL
-from signalstickers_client.utils.ca import CACERT_PATH
+from signalstickers_client.utils.ca import SSL_CONTEXT
 
 
-def upload_pack(pack, signal_user, signal_password):
+async def upload_pack(pack, signal_user, signal_password):
     """
     Upload a pack, and return (pack_id, pack_key)
     """
@@ -23,8 +24,11 @@ def upload_pack(pack, signal_user, signal_password):
     # Register the pack and getting authorizations
     # - "Hey, I'm {USER} and I'd like to upload {nb_stickers} stickers"
     # - "Hey, no problem, here are your credentials for uploading content"
-    register_req = requests.get(SERVICE_STICKER_FORM_URL.format(
-        nb_stickers=pack.nb_stickers_with_cover), auth=(signal_user, signal_password), verify=CACERT_PATH)
+    register_req = await asks.get(SERVICE_STICKER_FORM_URL.format(
+        nb_stickers=pack.nb_stickers_with_cover),
+        auth=asks.BasicAuth((signal_user, signal_password)),
+        ssl_context=SSL_CONTEXT,
+    )
 
     if register_req.status_code == 401:
         raise RuntimeError("Invalid authentication")
@@ -46,7 +50,7 @@ def upload_pack(pack, signal_user, signal_password):
     )
 
     # Upload the encrypted manifest
-    _upload_cdn(pack_attrs["manifest"], encrypted_manifest)
+    await _upload_cdn(pack_attrs["manifest"], encrypted_manifest)
 
     # Upload each sticker
     stickers_list = pack.stickers
@@ -54,35 +58,35 @@ def upload_pack(pack, signal_user, signal_password):
     if pack.cover:
         stickers_list.append(pack.cover)
 
-    for sticker in stickers_list:
-        # Encrypt the sticker
-        encrypted_sticker = encrypt(
-            plaintext=sticker.image_data,
-            aes_key=aes_key,
-            hmac_key=hmac_key,
-            iv=iv
-        )
+    async with anyio.create_task_group() as tg:
+	    for sticker in stickers_list:
+	        # Encrypt the sticker
+	        encrypted_sticker = encrypt(
+	            plaintext=sticker.image_data,
+	            aes_key=aes_key,
+	            hmac_key=hmac_key,
+	            iv=iv
+	        )
 
-        _upload_cdn(pack_attrs["stickers"][sticker.id], encrypted_sticker)
-
+	        await tg.spawn(_upload_cdn, pack_attrs["stickers"][sticker.id], encrypted_sticker)
 
     return pack_attrs["packId"], pack_key
 
-def _upload_cdn(cdn_creds, encrypted_data):
+async def _upload_cdn(cdn_creds, encrypted_data):
     """
     Upload an object (manifest or sticker) to the CDN
     """
 
     payload = {
-        'key': (None, cdn_creds["key"]),
-        'x-amz-credential': (None, cdn_creds["credential"]),
-        'acl': (None, cdn_creds["acl"]),
-        'x-amz-algorithm': (None, cdn_creds["algorithm"]),
-        'x-amz-date': (None, cdn_creds["date"]),
-        'policy': (None, cdn_creds["policy"]),
-        'x-amz-signature': (None, cdn_creds["signature"]),
-        'Content-Type': (None, 'application/octet-stream'),
-        'file': (None, encrypted_data, 'application/octet-stream'),
+        'key': cdn_creds["key"],
+        'x-amz-credential': cdn_creds["credential"],
+        'acl': cdn_creds["acl"],
+        'x-amz-algorithm': cdn_creds["algorithm"],
+        'x-amz-date': cdn_creds["date"],
+        'policy': cdn_creds["policy"],
+        'x-amz-signature': cdn_creds["signature"],
+        'Content-Type': 'application/octet-stream',
+        'file': encrypted_data,
     }
 
-    requests.post(CDN_BASEURL, files=payload, verify=CACERT_PATH)
+    await asks.post(CDN_BASEURL, multipart=payload, ssl_context=SSL_CONTEXT)
