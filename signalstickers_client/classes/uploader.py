@@ -58,18 +58,19 @@ async def upload_pack(pack, signal_user, signal_password):
         if pack.cover:
             stickers_list.append(pack.cover)
 
-        async with anyio.create_task_group() as tg:
-            for sticker in stickers_list:
-                # Encrypt the sticker
-                encrypted_sticker = encrypt(
-                    plaintext=sticker.image_data,
-                    aes_key=aes_key,
-                    hmac_key=hmac_key,
-                    iv=iv
-                )
+        # upload 5 stickers at a time in parallel
+        for i in range(0, len(stickers_list), 5):
+            async with anyio.create_task_group() as tg:
+                for sticker in stickers_list[i:i+5]:
+                    # Encrypt the sticker
+                    encrypted_sticker = encrypt(
+                        plaintext=sticker.image_data,
+                        aes_key=aes_key,
+                        hmac_key=hmac_key,
+                        iv=iv
+                    )
 
-                await tg.spawn(_upload_cdn, http, pack_attrs["stickers"][sticker.id], encrypted_sticker)
-
+                    await tg.spawn(_upload_cdn, http, pack_attrs["stickers"][sticker.id], encrypted_sticker)
 
     return pack_attrs["packId"], pack_key
 
