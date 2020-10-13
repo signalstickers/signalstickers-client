@@ -14,8 +14,8 @@ setuptools.setup(
     url="https://github.com/romainricard/signalstickers-client",
     packages=setuptools.find_packages(),
     install_requires=[
-        # temporary until asks on pypi supports anyio 2.0
-        'asks>=2.4.10,<3.0.0',
+        'anyio>=2.0.2,<3.0.0',
+        'httpx>=0.16.1,<0.17.0',
         'cryptography>=3.1.1,<4.0.0',
         'protobuf>=3.13.0,<4.0.0',
     ],

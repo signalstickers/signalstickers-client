@@ -16,7 +16,7 @@ async def main():
     print(pack.nb_stickers)  # 7
 
     async def save_sticker(sticker):
-        async with await anyio.aopen(
+        async with await anyio.open_file(
             os.path.join("/tmp", "stickersclient", "{}.webp".format(sticker.id)),
             "wb",
         ) as f:
