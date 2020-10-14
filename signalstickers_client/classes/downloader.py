@@ -39,6 +39,7 @@ async def get_pack_metadata(http, pack_id, pack_key):
     """
     manifest_req = await http.get(CDN_MANIFEST_URL.format(
         pack_id=pack_id), timeout=None)
+    manifest_req.raise_for_status()
     manifest_encrypted = bytes(manifest_req.content)
     manifest_proto = decrypt(manifest_encrypted, pack_key)
 
@@ -71,6 +72,7 @@ async def get_sticker(http, sticker_id, pack_id, pack_key):
         CDN_STICKER_URL.format(pack_id=pack_id, sticker_id=sticker_id),
         timeout=None,
     )
+    sticker_req.raise_for_status()
     sticker_encrypted = bytes(sticker_req.content)
     sticker = decrypt(sticker_encrypted, pack_key)
     return sticker
