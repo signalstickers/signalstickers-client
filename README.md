@@ -67,8 +67,8 @@ pack_id = "4830e258138fca961ab2151d9596755c"
 pack_key = "87078ee421bad8bf44092ca72166b67ae5397e943452e4300ced9367b7f6a1a1"
 
 
-client = StickersClient()
-pack = await client.get_pack(pack_id, pack_key)
+async with StickersClient() as client:
+    pack = await client.get_pack(pack_id, pack_key)
 
 print(pack.title)  # "Friends of the Internet"
 print(pack.author)  # "Bits of Freedom"
@@ -121,10 +121,9 @@ pack.cover = cover
 
 
 # Instanciate the client with your Signal crendentials
-client = StickersClient("YOUR_SIGNAL_USER", "YOUR_SIGNAL_PASS")
-
-# Upload the pack
-pack_id, pack_key = await client.upload_pack(pack)
+async with StickersClient("YOUR_SIGNAL_USER", "YOUR_SIGNAL_PASS") as client:
+    # Upload the pack
+    pack_id, pack_key = await client.upload_pack(pack)
 
 print("Pack uploaded!\n\nhttps://signal.art/addstickers/#pack_id={}&pack_key={}".format(pack_id, pack_key))
 ```

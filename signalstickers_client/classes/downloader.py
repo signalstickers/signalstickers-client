@@ -13,27 +13,26 @@ This module allows to get full sticker packs, contains both data and metadata
 """
 
 
-async def get_pack(pack_id, pack_key):
+async def get_pack(http: httpx.AsyncClient, pack_id, pack_key):
     """
-    Return a `StickerPack` from its id and key
+    Return a `StickerPack` and all of its enclosing `Sticker` images from its id and key
     """
-    async with httpx.AsyncClient(verify=CACERT_PATH) as http:
-        pack = await _get_pack(http, pack_id, pack_key)
+    pack = await get_pack_metadata(http, pack_id, pack_key)
 
-        async def get_sticker_image(sticker):
-            sticker.image_data = await _get_sticker(http, sticker.id, pack_id, pack_key)
+    async def get_sticker_image(sticker):
+        sticker.image_data = await get_sticker(http, sticker.id, pack_id, pack_key)
 
-        async with anyio.create_task_group() as tg:
-            # The StickerPack object is created, but stickers and cover
-            # are still missing the raw_image
-            await tg.spawn(get_sticker_image, pack.cover)
-            for sticker in pack.stickers:
-                await tg.spawn(get_sticker_image, sticker)
+    async with anyio.create_task_group() as tg:
+        # The StickerPack object is created, but stickers and cover
+        # are still missing the raw_image
+        await tg.spawn(get_sticker_image, pack.cover)
+        for sticker in pack.stickers:
+            await tg.spawn(get_sticker_image, sticker)
 
     return pack
 
 
-async def _get_pack(http, pack_id, pack_key):
+async def get_pack_metadata(http, pack_id, pack_key):
     """
     Parse the pack manifest, and return
     a `StickerPack` object
@@ -64,7 +63,7 @@ async def _get_pack(http, pack_id, pack_key):
     return pack
 
 
-async def _get_sticker(http, sticker_id, pack_id, pack_key):
+async def get_sticker(http, sticker_id, pack_id, pack_key):
     """
     Return the content of the webp file for a given sticker
     """

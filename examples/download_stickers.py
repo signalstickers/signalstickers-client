@@ -8,8 +8,8 @@ async def main():
     pack_key = "87078ee421bad8bf44092ca72166b67ae5397e943452e4300ced9367b7f6a1a1"
 
 
-    client = StickersClient()
-    pack = await client.get_pack(pack_id, pack_key)
+    async with StickersClient() as client:
+        pack = await client.get_pack(pack_id, pack_key)
 
     print(pack.title)  # "Friends of the Internet"
     print(pack.author)  # "Bits of Freedom"

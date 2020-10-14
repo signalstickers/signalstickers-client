@@ -44,10 +44,9 @@ async def main():
 
 
     # Instanciate the client with your Signal crendentials
-    client = StickersClient(os.environ['SIGNAL_USERNAME'], os.environ['SIGNAL_PASSWORD'])
-
-    # Upload the pack
-    pack_id, pack_key = await client.upload_pack(pack)
+    async with StickersClient(os.environ['SIGNAL_USERNAME'], os.environ['SIGNAL_PASSWORD']) as client:
+        # Upload the pack
+        pack_id, pack_key = await client.upload_pack(pack)
 
     print("Pack uploaded!\n\nhttps://signal.art/addstickers/#pack_id={}&pack_key={}".format(pack_id, pack_key))
 
