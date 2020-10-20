@@ -1,16 +1,17 @@
 import json
-import requests
-import urllib3
 from os import getenv
 from secrets import token_hex, token_bytes
 from uuid import uuid4
+
+import anyio
+import httpx
 
 from signalstickers_client.classes.signalcrypto import encrypt, derive_key, decrypt
 from signalstickers_client.urls import SERVICE_STICKER_FORM_URL, CDN_BASEURL
 from signalstickers_client.utils.ca import CACERT_PATH
 
 
-def upload_pack(pack, signal_user, signal_password):
+async def upload_pack(http, pack, signal_user, signal_password):
     """
     Upload a pack, and return (pack_id, pack_key)
     """
@@ -23,8 +24,11 @@ def upload_pack(pack, signal_user, signal_password):
     # Register the pack and getting authorizations
     # - "Hey, I'm {USER} and I'd like to upload {nb_stickers} stickers"
     # - "Hey, no problem, here are your credentials for uploading content"
-    register_req = requests.get(SERVICE_STICKER_FORM_URL.format(
-        nb_stickers=pack.nb_stickers_with_cover), auth=(signal_user, signal_password), verify=CACERT_PATH)
+    register_req = await http.get(SERVICE_STICKER_FORM_URL.format(
+        nb_stickers=pack.nb_stickers_with_cover),
+        auth=(signal_user, signal_password),
+        timeout=None,
+    )
 
     if register_req.status_code == 401:
         raise RuntimeError("Invalid authentication")
@@ -46,7 +50,7 @@ def upload_pack(pack, signal_user, signal_password):
     )
 
     # Upload the encrypted manifest
-    _upload_cdn(pack_attrs["manifest"], encrypted_manifest)
+    await _upload_cdn(http, pack_attrs["manifest"], encrypted_manifest)
 
     # Upload each sticker
     stickers_list = pack.stickers
@@ -54,21 +58,23 @@ def upload_pack(pack, signal_user, signal_password):
     if pack.cover:
         stickers_list.append(pack.cover)
 
-    for sticker in stickers_list:
-        # Encrypt the sticker
-        encrypted_sticker = encrypt(
-            plaintext=sticker.image_data,
-            aes_key=aes_key,
-            hmac_key=hmac_key,
-            iv=iv
-        )
+    # upload 5 stickers at a time in parallel
+    for i in range(0, len(stickers_list), 5):
+        async with anyio.create_task_group() as tg:
+            for sticker in stickers_list[i:i+5]:
+                # Encrypt the sticker
+                encrypted_sticker = encrypt(
+                    plaintext=sticker.image_data,
+                    aes_key=aes_key,
+                    hmac_key=hmac_key,
+                    iv=iv
+                )
 
-        _upload_cdn(pack_attrs["stickers"][sticker.id], encrypted_sticker)
-
+                await tg.spawn(_upload_cdn, http, pack_attrs["stickers"][sticker.id], encrypted_sticker)
 
     return pack_attrs["packId"], pack_key
 
-def _upload_cdn(cdn_creds, encrypted_data):
+async def _upload_cdn(http, cdn_creds, encrypted_data):
     """
     Upload an object (manifest or sticker) to the CDN
     """
@@ -85,4 +91,4 @@ def _upload_cdn(cdn_creds, encrypted_data):
         'file': (None, encrypted_data, 'application/octet-stream'),
     }
 
-    requests.post(CDN_BASEURL, files=payload, verify=CACERT_PATH)
+    await http.post(CDN_BASEURL, files=payload, timeout=None)

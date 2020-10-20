@@ -1,4 +1,5 @@
-import requests
+import anyio
+import httpx
 from signalstickers_client.models.sticker import Sticker
 from signalstickers_client.models.sticker_pack import StickerPack
 from signalstickers_client.urls import CDN_MANIFEST_URL, CDN_STICKER_URL
@@ -12,29 +13,34 @@ This module allows to get full sticker packs, contains both data and metadata
 """
 
 
-def get_pack(pack_id, pack_key):
+async def get_pack(http: httpx.AsyncClient, pack_id, pack_key):
     """
-    Return a `StickerPack` from its id and key
+    Return a `StickerPack` and all of its enclosing `Sticker` images from its id and key
     """
-    pack = _get_pack(pack_id, pack_key)
+    pack = await get_pack_metadata(http, pack_id, pack_key)
 
-    # The StickerPack object is created, but stickers and cover
-    # are still missing the raw_image
-    pack.cover.image_data = _get_sticker(pack.cover.id, pack_id, pack_key)
-    for sticker in pack.stickers:
-        sticker.image_data = _get_sticker(sticker.id, pack_id, pack_key)
+    async def get_sticker_image(sticker):
+        sticker.image_data = await get_sticker(http, sticker.id, pack_id, pack_key)
+
+    async with anyio.create_task_group() as tg:
+        # The StickerPack object is created, but stickers and cover
+        # are still missing the raw_image
+        await tg.spawn(get_sticker_image, pack.cover)
+        for sticker in pack.stickers:
+            await tg.spawn(get_sticker_image, sticker)
 
     return pack
 
 
-def _get_pack(pack_id, pack_key):
+async def get_pack_metadata(http, pack_id, pack_key):
     """
     Parse the pack manifest, and return
     a `StickerPack` object
     """
-    manifest_req = requests.get(CDN_MANIFEST_URL.format(
-        pack_id=pack_id), verify=CACERT_PATH)
-    manifest_encrypted = manifest_req.content
+    manifest_req = await http.get(CDN_MANIFEST_URL.format(
+        pack_id=pack_id), timeout=None)
+    manifest_req.raise_for_status()
+    manifest_encrypted = bytes(manifest_req.content)
     manifest_proto = decrypt(manifest_encrypted, pack_key)
 
     pb_pack = Pack()
@@ -58,14 +64,15 @@ def _get_pack(pack_id, pack_key):
     return pack
 
 
-def _get_sticker(sticker_id, pack_id, pack_key):
+async def get_sticker(http, sticker_id, pack_id, pack_key):
     """
     Return the content of the webp file for a given sticker
     """
-    sticker_req = requests.get(
+    sticker_req = await http.get(
         CDN_STICKER_URL.format(pack_id=pack_id, sticker_id=sticker_id),
-        verify=CACERT_PATH
+        timeout=None,
     )
-    sticker_encrypted = sticker_req.content
+    sticker_req.raise_for_status()
+    sticker_encrypted = bytes(sticker_req.content)
     sticker = decrypt(sticker_encrypted, pack_key)
     return sticker
