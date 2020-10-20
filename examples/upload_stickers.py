@@ -1,5 +1,6 @@
 import os
 
+import anyio
 from signalstickers_client import StickersClient
 from signalstickers_client.models import LocalStickerPack, Sticker
 
@@ -51,5 +52,4 @@ async def main():
     print("Pack uploaded!\n\nhttps://signal.art/addstickers/#pack_id={}&pack_key={}".format(pack_id, pack_key))
 
 if __name__ == '__main__':
-    import anyio
     anyio.run(main)
