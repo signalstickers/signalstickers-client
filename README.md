@@ -51,89 +51,22 @@ A `Sticker` object exposes the following attributes:
 Same thing, but use `LocalStickerPack` (that does not contains `id` and `key`)
 instead of `StickerPack`.
 
+
+> **You will need your Signal credentials** To obtain them, open the Developer
+> Tools in Signal Desktop, and type `window.reduxStore.getState().items.uuid_id`
+> to get your USER, and `window.reduxStore.getState().items.password` to get
+> your PASSWORD.
+
+
 ## Example usage
 
-_[See also `examples/`](examples/)_
+[See `examples/`](examples/)
 
-### Downloading a pack
+## Development
 
-```python
-import os
-from signalstickers_client import StickersClient
-
-
-# "Friends of the Internet" by Bits of Freedom
-pack_id = "4830e258138fca961ab2151d9596755c"
-pack_key = "87078ee421bad8bf44092ca72166b67ae5397e943452e4300ced9367b7f6a1a1"
-
-
-async with StickersClient() as client:
-    pack = await client.get_pack(pack_id, pack_key)
-
-print(pack.title)  # "Friends of the Internet"
-print(pack.author)  # "Bits of Freedom"
-print(pack.nb_stickers)  # 7
-
-# Saves all stickers in webp format in /tmp/stickersclient
-# if the directory exists
-for sticker in pack.stickers:
-    with open(
-        os.path.join("/tmp", "stickersclient", "{}.webp".format(sticker.id)), "wb"
-    ) as sticker_f:
-        sticker_f.write(sticker.image_data)
-
-```
-
-### Uploading a pack
-
-```python
-from signalstickers_client import StickersClient
-from signalstickers_client.models import LocalStickerPack, Sticker
-
-
-def add_sticker(path, emoji):
-
-    stick = Sticker()
-    stick.id = pack.nb_stickers
-    stick.emoji = emoji
-
-    with open(path, "rb") as f_in:
-        stick.image_data = f_in.read()
-
-    pack._addsticker(stick)
-
-
-pack = LocalStickerPack()
-pack.title = 'Hello world!'
-pack.author = "Romain Ricard"
-
-# webp or GIF, for animated stickers!
-add_sticker("/tmp/1.webp", "🤪")
-add_sticker("/tmp/2.gif", "🐻")
-
-# Specifying a cover is optionnal
-# By default, the first sticker is the cover
-cover = Sticker()
-cover.id = pack.nb_stickers
-with open("/tmp/3.webp", "rb") as f_in:
-    cover.image_data = f_in.read()
-pack.cover = cover
-
-
-# Instanciate the client with your Signal crendentials
-async with StickersClient("YOUR_SIGNAL_USER", "YOUR_SIGNAL_PASS") as client:
-    # Upload the pack
-    pack_id, pack_key = await client.upload_pack(pack)
-
-print("Pack uploaded!\n\nhttps://signal.art/addstickers/#pack_id={}&pack_key={}".format(pack_id, pack_key))
-```
-
-> **How to obtain your Signal credentials?**
-> In Signal Desktop, open the Developer
-> Tools, and type `window.reduxStore.getState().items.uuid_id` to get your USER,
-> and `window.reduxStore.getState().items.password` to get your PASSWORD.
-
-
++ Create a `pipenv` with `pipenv install --dev`;
++ Edit the code you want;
++ Don't forget to launch tests with `pipenv run py.test`.
 
 ## License
 

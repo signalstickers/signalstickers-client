@@ -1,0 +1,12 @@
+[[source]]
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+"e1839a8" = {path = ".", editable = true}
+
+[dev-packages]
+pytest = ">=6.1.1,<7.0.0"
+curio = ">=1.4"
+trio = ">=0.16"

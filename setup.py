@@ -19,16 +19,6 @@ setuptools.setup(
         'cryptography>=3.1.1,<4.0.0',
         'protobuf>=3.13.0,<4.0.0',
     ],
-    extras_require={'dev': [
-        'pytest>=6.1.1,<7.0.0',
-        # For some reason we can't add a requirement with extras here
-        # if the same requirement is already in `install_requires`.
-        # So these have to be copied from anyio[curio,trio].
-        # These are here for testing, as pytest-anyio will run the same tests
-        # across all three async frameworks.
-        'curio>=1.4',
-        'trio>=0.16',
-    ]},
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)",
