@@ -17,7 +17,7 @@ A client to interact with the [Signal](https://signal.org/) stickers API.
 ## Installation
 
 ```bash
-pip install --user signalstickers-client
+pip3 install --user signalstickers-client
 ```
 
 This module requires `cryptography`, `protobuf`, `anyio`, and `httpx` (but they should

@@ -20,7 +20,10 @@ async def get_pack(http: httpx.AsyncClient, pack_id, pack_key):
     pack = await get_pack_metadata(http, pack_id, pack_key)
 
     async def get_sticker_image(sticker):
-        sticker.image_data = await get_sticker(http, sticker.id, pack_id, pack_key)
+        try:
+            sticker.image_data = await get_sticker(http, sticker.id, pack_id, pack_key)
+        except:
+            sticker.image_data = None
 
     async with anyio.create_task_group() as tg:
         # The StickerPack object is created, but stickers and cover
