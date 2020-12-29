@@ -10,11 +10,6 @@ from tests.mock_httpx import MockHttpx
 pytestmark = pytest.mark.anyio
 
 
-@pytest.fixture
-def client():
-    return
-
-
 def test_download(monkeypatch):
     """
     With a mocked httpx lib, test the whole "download" part.
