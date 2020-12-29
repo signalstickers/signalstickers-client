@@ -1,5 +1,7 @@
 import anyio
 import os
+from urllib.parse import parse_qs, urlparse
+
 from signalstickers_client import StickersClient
 from signalstickers_client.models import LocalStickerPack, Sticker
 
