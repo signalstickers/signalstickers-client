@@ -11,7 +11,9 @@ A _pack of stickers_ contains:
 + **Stickers**: the actual image data.
 
 
-The manifest is serialized using ProtocolBuffers (see the [Python adapter](signalstickers_client/classes/Stickers_pb2.py))
+The manifest is serialized using ProtocolBuffers (see the [Python
+adapter](signalstickers_client/classes/Stickers_pb2.py) and Signal's [proto
+file](https://signal.art/addstickers/Stickers.proto))
 
 ## Uploading a pack
 
@@ -65,7 +67,11 @@ author.
 
 ![](.github/internals_fetch.png)
 
-When opening a sticker pack in the app, the manifest is fetch by the app, then
-all the stickers, then decrypted with the key given in the URL.
+When opening a sticker pack in the app:
+
+1. Manifest is fetched by the app at `cdn.signal.org/stickers/{pack
+   id}/manifest.proto`, then decrypted using the `pack key`
+2. Individuals stickers files are fetched at `cdn.signal.org/stickers/{pack
+   id}/full/{sticker id (int))}` then decrypted using the `pack key`
 
 _The same principle is applicable for downloading pack when receiving a sticker._

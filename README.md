@@ -26,7 +26,7 @@ be installed with the previous command).
 ## Usage
 
 If you are not familiar with Signal stickers, read
-[stickers_internals.md](stickers_internals.md) first.
+[STICKERS_INTERNALS.md](STICKERS_INTERNALS.md) first.
 
 ### Downloading a pack
 The `StickerPack` object returned by `await StickersClient().get_pack(<pack_id>,
