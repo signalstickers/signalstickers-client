@@ -9,6 +9,7 @@ import httpx
 from signalstickers_client.classes.signalcrypto import encrypt, derive_key, decrypt
 from signalstickers_client.urls import SERVICE_STICKER_FORM_URL, CDN_BASEURL
 from signalstickers_client.utils.ca import CACERT_PATH
+from signalstickers_client.errors import Unauthorized, RateLimited
 
 
 async def upload_pack(http, pack, signal_user, signal_password):
@@ -17,26 +18,29 @@ async def upload_pack(http, pack, signal_user, signal_password):
     """
 
     if not signal_user or not signal_password:
-        raise RuntimeError("signal_user or signal_password not set")
+        raise ValueError("signal_user or signal_password not set")
 
     pack_key = token_hex(32)
 
     # Register the pack and getting authorizations
     # - "Hey, I'm {USER} and I'd like to upload {nb_stickers} stickers"
     # - "Hey, no problem, here are your credentials for uploading content"
-    register_req = await http.get(SERVICE_STICKER_FORM_URL.format(
+    register_resp = await http.get(SERVICE_STICKER_FORM_URL.format(
         nb_stickers=pack.nb_stickers_with_cover),
         auth=(signal_user, signal_password),
         timeout=None,
     )
 
-    if register_req.status_code == 401:
-        raise RuntimeError("Invalid authentication")
-    if register_req.status_code == 413:
+    if register_resp.status_code == 401:
+        raise Unauthorized(register_resp, "Invalid authentication")
+    if register_resp.status_code == 413:
         # Yes, it comes faster than you'll expect
-        raise RuntimeError(
-            "Service rate limit exceeded, please try again later.")
-    pack_attrs = register_req.json()
+        raise RateLimited(
+            register_resp, "Service rate limit exceeded, please try again later.")
+    if register_resp.status_code not in range(200, 300):
+        raise HTTPException(register_resp, "Unhandled HTTP exception while trying to upload a pack")
+
+    pack_attrs = register_resp.json()
 
     # Encrypt the manifest
     aes_key, hmac_key = derive_key(pack_key)
@@ -91,4 +95,6 @@ async def _upload_cdn(http, cdn_creds, encrypted_data):
         'file': (None, encrypted_data, 'application/octet-stream'),
     }
 
-    await http.post(CDN_BASEURL, files=payload, timeout=None)
+    upload_resp = await http.post(CDN_BASEURL, files=payload, timeout=None)
+    if upload_resp not in range(200, 300):
+        raise HTTPException(upload_resp, "Unhandled HTTP exception while trying to upload to the sticker CDN")

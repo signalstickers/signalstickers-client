@@ -6,6 +6,7 @@ from signalstickers_client.urls import CDN_MANIFEST_URL, CDN_STICKER_URL
 from signalstickers_client.classes.signalcrypto import decrypt
 from signalstickers_client.utils.ca import CACERT_PATH
 from signalstickers_client.classes.Stickers_pb2 import Pack
+from signalstickers_client.errors import HTTPException, NotFound
 
 
 """
@@ -20,10 +21,7 @@ async def get_pack(http: httpx.AsyncClient, pack_id, pack_key):
     pack = await get_pack_metadata(http, pack_id, pack_key)
 
     async def get_sticker_image(sticker):
-        try:
-            sticker.image_data = await get_sticker(http, sticker.id, pack_id, pack_key)
-        except:
-            sticker.image_data = None
+        sticker.image_data = await get_sticker(http, sticker.id, pack_id, pack_key)
 
     async with anyio.create_task_group() as tg:
         # The StickerPack object is created, but stickers and cover
@@ -40,10 +38,14 @@ async def get_pack_metadata(http, pack_id, pack_key):
     Parse the pack manifest, and return
     a `StickerPack` object
     """
-    manifest_req = await http.get(CDN_MANIFEST_URL.format(
+    manifest_resp = await http.get(CDN_MANIFEST_URL.format(
         pack_id=pack_id), timeout=None)
-    manifest_req.raise_for_status()
-    manifest_encrypted = bytes(manifest_req.content)
+    if manifest_resp.status_code == 404:
+        raise NotFound(manifest_resp, "Sticker pack not found")
+    elif manifest_resp.status_code not in range(200, 300):
+        raise HTTPException(manifest_resp, "Unhandled HTTP exception while downloading a sticker pack")
+
+    manifest_encrypted = manifest_resp.content
     manifest_proto = decrypt(manifest_encrypted, pack_key)
 
     pb_pack = Pack()
@@ -71,11 +73,15 @@ async def get_sticker(http, sticker_id, pack_id, pack_key):
     """
     Return the content of the webp file for a given sticker
     """
-    sticker_req = await http.get(
+    sticker_resp = await http.get(
         CDN_STICKER_URL.format(pack_id=pack_id, sticker_id=sticker_id),
         timeout=None,
     )
-    sticker_req.raise_for_status()
-    sticker_encrypted = bytes(sticker_req.content)
+    if sticker_resp.status_code == 404:
+        raise NotFound(sticker_resp, "Sticker not found")
+    elif sticker_resp.status_code not in range(200, 300):
+        raise HTTPException(sticker_resp, "Unhandled HTTP exception while downloading a sticker")
+
+    sticker_encrypted = sticker_resp.content
     sticker = decrypt(sticker_encrypted, pack_key)
     return sticker
