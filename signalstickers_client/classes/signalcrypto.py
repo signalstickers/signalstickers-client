@@ -1,4 +1,3 @@
-from binascii import unhexlify
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes, hmac, padding
 from cryptography.hazmat.primitives.ciphers import Cipher
@@ -75,8 +74,7 @@ def derive_key(pack_key):
         backend=default_backend(),
     )
 
-    # Kids, don't forget `unhexlify`, it took me 3hrs to figure it out
-    key = hkdf.derive(unhexlify(pack_key))
+    key = hkdf.derive(bytes.fromhex(pack_key))
     aes_key = key[0:32]
     hmac_key = key[32:64]
 
