@@ -1,15 +1,10 @@
-import json
-from os import getenv
 from secrets import token_hex, token_bytes
-from uuid import uuid4
 
 import anyio
-import httpx
 
-from signalstickers_client.classes.signalcrypto import encrypt, derive_key, decrypt
+from signalstickers_client.classes.signalcrypto import encrypt, derive_key
 from signalstickers_client.urls import SERVICE_STICKER_FORM_URL, CDN_BASEURL
-from signalstickers_client.utils.ca import CACERT_PATH
-from signalstickers_client.errors import Unauthorized, RateLimited
+from signalstickers_client.errors import HTTPException, Unauthorized, RateLimited
 
 
 async def upload_pack(http, pack, signal_user, signal_password):

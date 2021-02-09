@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import secrets
 import signalstickers_client.classes.Stickers_pb2 as protobuf_stickers
 
 
@@ -36,9 +35,9 @@ class LocalStickerPack:
         manifest = protobuf_stickers.Pack()
         manifest.title = self.title
         manifest.author = self.author
-        
+
         cover = manifest.cover
-        
+
         if self.cover:
             cover.id = self.cover.id
             cover.emoji = ""

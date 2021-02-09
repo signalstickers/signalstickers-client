@@ -6,7 +6,7 @@ class HTTPException(SignalException):
     def __init__(self, response, message):
         self.response = response
         self.status_code = response.status_code
-        super().__init__(f'{response.status_code}: message')
+        super().__init__(f'{response.status_code}: {message}')
 
 class NotFound(HTTPException):
     pass

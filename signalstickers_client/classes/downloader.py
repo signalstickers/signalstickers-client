@@ -1,17 +1,15 @@
+"""
+This module allows to get full sticker packs, contains both data and metadata
+"""
+
 import anyio
 import httpx
 from signalstickers_client.models.sticker import Sticker
 from signalstickers_client.models.sticker_pack import StickerPack
 from signalstickers_client.urls import CDN_MANIFEST_URL, CDN_STICKER_URL
 from signalstickers_client.classes.signalcrypto import decrypt
-from signalstickers_client.utils.ca import CACERT_PATH
 from signalstickers_client.classes.Stickers_pb2 import Pack
 from signalstickers_client.errors import HTTPException, NotFound
-
-
-"""
-This module allows to get full sticker packs, contains both data and metadata
-"""
 
 
 async def get_pack(http: httpx.AsyncClient, pack_id, pack_key):
@@ -42,7 +40,7 @@ async def get_pack_metadata(http, pack_id, pack_key):
         pack_id=pack_id), timeout=None)
     if manifest_resp.status_code == 404:
         raise NotFound(manifest_resp, "Sticker pack not found")
-    elif manifest_resp.status_code not in range(200, 300):
+    if manifest_resp.status_code not in range(200, 300):
         raise HTTPException(manifest_resp, "Unhandled HTTP exception while downloading a sticker pack")
 
     manifest_encrypted = manifest_resp.content
@@ -79,7 +77,7 @@ async def get_sticker(http, sticker_id, pack_id, pack_key):
     )
     if sticker_resp.status_code == 404:
         raise NotFound(sticker_resp, "Sticker not found")
-    elif sticker_resp.status_code not in range(200, 300):
+    if sticker_resp.status_code not in range(200, 300):
         raise HTTPException(sticker_resp, "Unhandled HTTP exception while downloading a sticker")
 
     sticker_encrypted = sticker_resp.content
