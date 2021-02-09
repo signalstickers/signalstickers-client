@@ -91,5 +91,5 @@ async def _upload_cdn(http, cdn_creds, encrypted_data):
     }
 
     upload_resp = await http.post(CDN_BASEURL, files=payload, timeout=None)
-    if upload_resp not in range(200, 300):
+    if upload_resp.status_code not in range(200, 300):
         raise HTTPException(upload_resp, "Unhandled HTTP exception while trying to upload to the sticker CDN")
