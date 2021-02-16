@@ -38,7 +38,7 @@ async def get_pack_metadata(http, pack_id, pack_key):
     """
     manifest_resp = await http.get(CDN_MANIFEST_URL.format(
         pack_id=pack_id), timeout=None)
-    if manifest_resp.status_code == 404:
+    if manifest_resp.status_code == 403:  # yes, 403, not 404
         raise NotFound(manifest_resp, "Sticker pack not found")
     if manifest_resp.status_code not in range(200, 300):
         raise HTTPException(manifest_resp, "Unhandled HTTP exception while downloading a sticker pack")
@@ -75,7 +75,7 @@ async def get_sticker(http, sticker_id, pack_id, pack_key):
         CDN_STICKER_URL.format(pack_id=pack_id, sticker_id=sticker_id),
         timeout=None,
     )
-    if sticker_resp.status_code == 404:
+    if sticker_resp.status_code == 403:  # same here, 403 is used instead of 404
         raise NotFound(sticker_resp, "Sticker not found")
     if sticker_resp.status_code not in range(200, 300):
         raise HTTPException(sticker_resp, "Unhandled HTTP exception while downloading a sticker")
