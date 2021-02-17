@@ -28,7 +28,7 @@
 import httpx
 
 from signalstickers_client.classes import downloader, uploader
-from signalstickers_client.models import Sticker, StickerPack, LocalStickerPack
+from signalstickers_client.models import LocalStickerPack
 from signalstickers_client.utils.ca import CACERT_PATH
 
 

@@ -28,12 +28,10 @@ class MockResponse:
     Used to monkeypatch `httpx`'s response
     """
 
+    status_code = 200
+
     def __init__(self, url):
         self.content_data = get_data_from_url(url)
-
-    @staticmethod
-    def raise_for_status():
-        pass
 
     @property
     def content(self):
