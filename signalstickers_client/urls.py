@@ -1,5 +1,5 @@
 
-CDN_BASEURL = "https://cdn.signal.org/"
+CDN_BASEURL = "https://cdn-ca.signal.org/"
 
 CDN_STICKER_URL = CDN_BASEURL + "stickers/{pack_id}/"
 CDN_MANIFEST_URL = CDN_STICKER_URL + "manifest.proto"
