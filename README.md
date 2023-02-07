@@ -55,10 +55,10 @@ Same thing, but use `LocalStickerPack` (that does not contains `id` and `key`)
 instead of `StickerPack`.
 
 
-> **You will need your Signal credentials** To obtain them, run the Signal Desktop 
-> app with the flag `--enable-dev-tools`, open the Developer Tools, and type
-> `window.reduxStore.getState().items.uuid_id` to get your USER, and
-> `window.reduxStore.getState().items.password` to get your PASSWORD.
+> **You will need your Signal credentials** To obtain them, install and run
+> [Signal Desktop BETA VERSION](https://support.signal.org/hc/en-us/articles/360007318471-Signal-Beta), open `View -> Toggle Developers tools`, and type
+> `window.SignalDebug.getReduxState().items.uuid_id` to get your USER, and
+> `window.SignalDebug.getReduxState().items.password` to get your PASSWORD.
 
 
 ## Example usage
