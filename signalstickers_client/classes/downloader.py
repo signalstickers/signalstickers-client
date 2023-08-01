@@ -24,9 +24,9 @@ async def get_pack(http: httpx.AsyncClient, pack_id, pack_key):
     async with anyio.create_task_group() as tg:
         # The StickerPack object is created, but stickers and cover
         # are still missing the raw_image
-        await tg.spawn(get_sticker_image, pack.cover)
+        tg.start_soon(get_sticker_image, pack.cover)
         for sticker in pack.stickers:
-            await tg.spawn(get_sticker_image, sticker)
+            tg.start_soon(get_sticker_image, sticker)
 
     return pack
 
