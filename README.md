@@ -54,11 +54,21 @@ A `Sticker` object exposes the following attributes:
 Same thing, but use `LocalStickerPack` (that does not contains `id` and `key`)
 instead of `StickerPack`.
 
+**You will need your Signal credentials!**
 
-> **You will need your Signal credentials** To obtain them, run the Signal Desktop 
-> app with the flag `--enable-dev-tools`, open the Developer Tools, and type
-> `window.reduxStore.getState().items.uuid_id` to get your USER, and
-> `window.reduxStore.getState().items.password` to get your PASSWORD.
+To obtain them, run the Signal Desktop 
+app with the flag `--enable-dev-tools`, open the Developer Tools,
+**set the JavaScript context to `Electron Isolated Context`** (cf. video
+below), and type `window.reduxStore.getState().items.uuid_id` to get
+your USER, and `window.reduxStore.getState().items.password` to get
+your PASSWORD.
+
+<details>
+  <summary><i>Video: how to set JavaScript context</i></summary>
+
+https://github.com/signalstickers/signalstickers-client/assets/7778898/ca3f1fec-e908-49d9-88a8-e33d0ee9a453
+
+</details>
 
 
 ## Example usage
