@@ -58,8 +58,8 @@ instead of `StickerPack`.
 
 To obtain them, run the Signal Desktop 
 app with the flag `--enable-dev-tools`, open the Developer Tools,
-**set the JavaScript context to `Electron Isolated Context`** (cf. video
-below), and type `window.reduxStore.getState().items.uuid_id` to get
+**change the JavaScript context from `top` to `Electron Isolated Context`**
+(cf. video below), and type `window.reduxStore.getState().items.uuid_id` to get
 your USER, and `window.reduxStore.getState().items.password` to get
 your PASSWORD.
 
