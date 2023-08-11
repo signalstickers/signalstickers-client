@@ -10,14 +10,13 @@ from cryptography.hazmat.primitives.kdf.hkdf import HKDF
 #   iv (16) + encrypted data (n) + hmac (32)
 
 
-
 def encrypt(plaintext, aes_key, hmac_key, iv):
     """
     Encrypt a manifest or an image
     """
 
     padder = padding.PKCS7(128).padder()
-    padded_plaintext = padder.update(plaintext)+ padder.finalize()
+    padded_plaintext = padder.update(plaintext) + padder.finalize()
 
     cipher = Cipher(AES(aes_key), CBC(iv), default_backend())
     encryptor = cipher.encryptor()

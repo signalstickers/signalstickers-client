@@ -38,7 +38,7 @@ class StickersClient:
         self.signal_user = signal_user
         self.signal_pass = signal_pass
 
-    async def __aenter__(self) -> 'StickersClient':
+    async def __aenter__(self) -> "StickersClient":
         self.http = await httpx.AsyncClient(verify=CACERT_PATH).__aenter__()
         return self
 
@@ -67,4 +67,6 @@ class StickersClient:
         """
         Upload a `LocalStickerPack` and return its `pack_id` and `pack_key`
         """
-        return await uploader.upload_pack(self.http, pack, self.signal_user, self.signal_pass)
+        return await uploader.upload_pack(
+            self.http, pack, self.signal_user, self.signal_pass
+        )

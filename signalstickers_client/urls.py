@@ -1,4 +1,3 @@
-
 CDN_BASEURL = "https://cdn.signal.org/"
 
 CDN_STICKER_URL = CDN_BASEURL + "stickers/{pack_id}/"
