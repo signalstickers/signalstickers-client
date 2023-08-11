@@ -4,16 +4,18 @@ from cryptography.hazmat.primitives.ciphers import Cipher
 from cryptography.hazmat.primitives.ciphers.algorithms import AES
 from cryptography.hazmat.primitives.ciphers.modes import CBC
 from cryptography.hazmat.primitives.kdf.hkdf import HKDF
-
+from secrets import token_bytes
 
 # Signal encrypted {sticker, manifest} are composed as follow:
 #   iv (16) + encrypted data (n) + hmac (32)
 
 
-def encrypt(plaintext, aes_key, hmac_key, iv):
+def encrypt(plaintext, aes_key, hmac_key):
     """
     Encrypt a manifest or an image
     """
+
+    iv = token_bytes(16)
 
     padder = padding.PKCS7(128).padder()
     padded_plaintext = padder.update(plaintext) + padder.finalize()
@@ -36,7 +38,7 @@ def decrypt(encrypted_data, pack_key):
     """
     aes_key, hmac_key = derive_key(pack_key)
 
-    pack_iv = encrypted_data[0:16]
+    iv = encrypted_data[0:16]
     pack_ciphertext_body = encrypted_data[16:-32]
     pack_hmac = encrypted_data[-32:]
     pack_combined = encrypted_data[0:-32]
@@ -46,7 +48,7 @@ def decrypt(encrypted_data, pack_key):
     hmac_o.update(pack_combined)
     hmac_o.verify(pack_hmac)
 
-    cipher = Cipher(AES(aes_key), CBC(pack_iv), default_backend())
+    cipher = Cipher(AES(aes_key), CBC(iv), default_backend())
     decryptor = cipher.decryptor()
     decrypted_data = decryptor.update(pack_ciphertext_body) + decryptor.finalize()
 

@@ -1,4 +1,4 @@
-from secrets import token_hex, token_bytes
+from secrets import token_hex
 
 import anyio
 
@@ -42,10 +42,11 @@ async def upload_pack(http, pack, signal_user, signal_password):
 
     # Encrypt the manifest
     aes_key, hmac_key = derive_key(pack_key)
-    iv = token_bytes(16)
 
     encrypted_manifest = encrypt(
-        plaintext=pack.manifest, aes_key=aes_key, hmac_key=hmac_key, iv=iv
+        plaintext=pack.manifest,
+        aes_key=aes_key,
+        hmac_key=hmac_key,
     )
 
     # Upload the encrypted manifest
@@ -66,7 +67,6 @@ async def upload_pack(http, pack, signal_user, signal_password):
                     plaintext=sticker.image_data,
                     aes_key=aes_key,
                     hmac_key=hmac_key,
-                    iv=iv,
                 )
 
                 tg.start_soon(
