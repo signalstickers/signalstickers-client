@@ -69,7 +69,7 @@ async def upload_pack(http, pack, signal_user, signal_password):
                     iv=iv
                 )
 
-                await tg.spawn(_upload_cdn, http, pack_attrs["stickers"][sticker.id], encrypted_sticker)
+                tg.start_soon(_upload_cdn, http, pack_attrs["stickers"][sticker.id], encrypted_sticker)
 
     return pack_attrs["packId"], pack_key
 

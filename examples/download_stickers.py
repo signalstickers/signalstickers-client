@@ -26,7 +26,7 @@ async def main():
         # Saves all stickers in webp format in /tmp/stickersclient in parallel
         # if the directory exists
         for sticker in pack.stickers:
-            await tg.spawn(save_sticker, sticker)
+            tg.start_soon(save_sticker, sticker)
 
 if __name__ == '__main__':
     anyio.run(main)
