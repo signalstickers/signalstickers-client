@@ -9,7 +9,7 @@ A client to interact with the [Signal](https://signal.org/) stickers API.
 
 
 > Note: despite its name, this client does not interacts with
-> `signalstickers.com`, so information defined there (tags, etc.) will **not**
+> `signalstickers.org`, so information defined there (tags, etc.) will **not**
 > be fetched.
 
 > This client connects to the Signal sticker API. Please **do not flood it**
