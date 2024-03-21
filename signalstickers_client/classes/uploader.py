@@ -11,11 +11,11 @@ from signalstickers_client.urls import SERVICE_STICKER_FORM_URL, CDN_BASEURL
 
 
 async def upload_pack(
-        http: httpx.AsyncClient,
-        pack: LocalStickerPack,
-        signal_user: str,
-        signal_password: str,
-    ) -> Tuple[str, str]:
+    http: httpx.AsyncClient,
+    pack: LocalStickerPack,
+    signal_user: str,
+    signal_password: str,
+) -> Tuple[str, str]:
     """
     Upload a pack, and return (pack_id, pack_key)
     """
@@ -88,10 +88,10 @@ async def upload_pack(
 
 
 async def _upload_cdn(
-        http: httpx.AsyncClient,
-        cdn_creds: Dict[str, str],
-        encrypted_data: bytes,
-    ):
+    http: httpx.AsyncClient,
+    cdn_creds: Dict[str, str],
+    encrypted_data: bytes,
+):
     """
     Upload an object (manifest or sticker) to the CDN
     """

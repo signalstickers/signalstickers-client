@@ -25,6 +25,7 @@
     Author: Romain RICARD <contact+stickerclient@romainricard.fr>
     License: LGPLv3
 """
+
 import httpx
 from types import TracebackType
 
@@ -63,7 +64,9 @@ class StickersClient:
         """
         return await downloader.get_pack_metadata(self.http, pack_id, pack_key)
 
-    async def download_sticker(self, sticker_id: int, pack_id: str, pack_key: str) -> bytes:
+    async def download_sticker(
+        self, sticker_id: int, pack_id: str, pack_key: str
+    ) -> bytes:
         """
         Return the image data for a given `sticker_id` belonging to the given `pack_id` and `pack_key`
         """

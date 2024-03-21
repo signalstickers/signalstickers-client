@@ -1,6 +1,7 @@
 """
 This module allows to get full sticker packs, contains both data and metadata
 """
+
 from typing import Optional
 
 import anyio
@@ -32,7 +33,9 @@ async def get_pack(http: httpx.AsyncClient, pack_id: str, pack_key: str) -> Stic
     return pack
 
 
-async def get_pack_metadata(http: httpx.AsyncClient, pack_id: str, pack_key: str) -> StickerPack:
+async def get_pack_metadata(
+    http: httpx.AsyncClient, pack_id: str, pack_key: str
+) -> StickerPack:
     """
     Parse the pack manifest, and return
     a `StickerPack` object
@@ -71,7 +74,9 @@ async def get_pack_metadata(http: httpx.AsyncClient, pack_id: str, pack_key: str
     return pack
 
 
-async def get_sticker(http: httpx.AsyncClient, sticker_id: Optional[int], pack_id: str, pack_key: str):
+async def get_sticker(
+    http: httpx.AsyncClient, sticker_id: Optional[int], pack_id: str, pack_key: str
+):
     """
     Return the content of the webp file for a given sticker
     """

@@ -1,5 +1,6 @@
 from httpx import Response
 
+
 class SignalException(Exception):
     """Base class for all exceptions explicitly raised by this library."""
 
