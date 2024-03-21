@@ -6,7 +6,7 @@ from signalstickers_client.models import LocalStickerPack, Sticker
 
 
 async def main():
-    def add_sticker(path, emoji):
+    def add_sticker(path: str, emoji: str):
 
         stick = Sticker()
         stick.id = pack.nb_stickers
@@ -15,7 +15,7 @@ async def main():
         with open(path, "rb") as f_in:
             stick.image_data = f_in.read()
 
-        pack._addsticker(stick)
+        pack._addsticker(stick)  # type: ignore
 
 
     pack = LocalStickerPack()

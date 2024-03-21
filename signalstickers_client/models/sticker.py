@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from typing import Optional
 
 
 class Sticker:
@@ -8,6 +9,6 @@ class Sticker:
     """
 
     def __init__(self):
-        self.id = None
-        self.emoji = None
-        self.image_data = None
+        self.id: Optional[int] = None
+        self.emoji: Optional[str] = None
+        self.image_data: Optional[bytes] = None

@@ -1,16 +1,18 @@
+from secrets import token_bytes
+from typing import Tuple
+
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes, hmac, padding
 from cryptography.hazmat.primitives.ciphers import Cipher
 from cryptography.hazmat.primitives.ciphers.algorithms import AES
 from cryptography.hazmat.primitives.ciphers.modes import CBC
 from cryptography.hazmat.primitives.kdf.hkdf import HKDF
-from secrets import token_bytes
 
 # Signal encrypted {sticker, manifest} are composed as follow:
 #   iv (16) + encrypted data (n) + hmac (32)
 
 
-def encrypt(plaintext, aes_key, hmac_key):
+def encrypt(plaintext: bytes, aes_key: bytes, hmac_key: bytes) -> bytes:
     """
     Encrypt a manifest or an image
     """
@@ -32,7 +34,7 @@ def encrypt(plaintext, aes_key, hmac_key):
     return iv + encrypted_data + hmac_o.finalize()
 
 
-def decrypt(encrypted_data, pack_key):
+def decrypt(encrypted_data: bytes, pack_key: str) -> bytes:
     """
     Decrypt a manifest or an image
     """
@@ -59,7 +61,7 @@ def decrypt(encrypted_data, pack_key):
     return unpadded_data + unpadder.finalize()
 
 
-def derive_key(pack_key):
+def derive_key(pack_key: str) -> Tuple[bytes, bytes]:
     """
     Derive a pack_key, and returns a `aes_key` and a `hmac_key`
     """

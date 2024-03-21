@@ -10,12 +10,12 @@ from mock_httpx import MockHttpx
 pytestmark = pytest.mark.anyio
 
 
-def test_download(monkeypatch):
+def test_download(monkeypatch: pytest.MonkeyPatch):
     """
     With a mocked httpx lib, test the whole "download" part.
     """
 
-    async def get_pack(pack_id, pack_key):
+    async def get_pack(pack_id: str, pack_key: str):
         async with signalstickers_client.StickersClient() as client:
             pack = await client.get_pack(pack_id, pack_key)
             return pack
@@ -53,6 +53,8 @@ def test_download(monkeypatch):
 
     # Check stickers
     for sticker in pack.stickers:
+        assert sticker.id is not None
+        assert sticker.image_data is not None
         assert (
             expected_files[sticker.id]["hash"]
             == hashlib.sha256(sticker.image_data).hexdigest()
@@ -60,6 +62,8 @@ def test_download(monkeypatch):
         assert expected_files[sticker.id]["emoji"] == sticker.emoji
 
     # Check cover
+    assert pack.cover
+    assert pack.cover.image_data
     assert (
         expected_files["cover"]["hash"]
         == hashlib.sha256(pack.cover.image_data).hexdigest()

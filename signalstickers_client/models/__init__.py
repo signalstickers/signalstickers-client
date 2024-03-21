@@ -3,8 +3,4 @@ from .sticker import Sticker
 from .sticker_pack import StickerPack
 
 
-__all__ = (
-    "LocalStickerPack",
-    "Sticker",
-    "StickerPack"
-)
+__all__ = ("LocalStickerPack", "Sticker", "StickerPack")

@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from typing import List, Optional
+
+from signalstickers_client.models.sticker import Sticker
 
 
 class StickerPack:
@@ -7,13 +10,13 @@ class StickerPack:
     Represent a Sticker Pack
     """
 
-    def __init__(self, id, key):
-        self.id = id
-        self.key = key
-        self.title = None
-        self.author = None
-        self.cover = None
-        self.stickers = []
+    def __init__(self, id: str, key: str):
+        self.id: str = id
+        self.key: str = key
+        self.title: Optional[str] = None
+        self.author: Optional[str] = None
+        self.cover: Optional[Sticker] = None
+        self.stickers: List[Sticker] = []
 
     @property
     def nb_stickers(self):
@@ -22,7 +25,7 @@ class StickerPack:
         """
         return len(self.stickers)
 
-    def _addsticker(self, sticker):
+    def _addsticker(self, sticker: Sticker):
         """
         Add the binary content (which is a webp image) to
         the `StickerPack`' list of stickers

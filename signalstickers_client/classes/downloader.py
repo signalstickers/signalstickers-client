@@ -2,6 +2,8 @@
 This module allows to get full sticker packs, contains both data and metadata
 """
 
+from typing import Optional
+
 import anyio
 import httpx
 from signalstickers_client.models.sticker import Sticker
@@ -12,13 +14,13 @@ from signalstickers_client.classes.Stickers_pb2 import Pack
 from signalstickers_client.errors import HTTPException, NotFound
 
 
-async def get_pack(http: httpx.AsyncClient, pack_id, pack_key):
+async def get_pack(http: httpx.AsyncClient, pack_id: str, pack_key: str) -> StickerPack:
     """
     Return a `StickerPack` and all of its enclosing `Sticker` images from its id and key
     """
     pack = await get_pack_metadata(http, pack_id, pack_key)
 
-    async def get_sticker_image(sticker):
+    async def get_sticker_image(sticker: Sticker):
         sticker.image_data = await get_sticker(http, sticker.id, pack_id, pack_key)
 
     async with anyio.create_task_group() as tg:
@@ -31,7 +33,9 @@ async def get_pack(http: httpx.AsyncClient, pack_id, pack_key):
     return pack
 
 
-async def get_pack_metadata(http, pack_id, pack_key):
+async def get_pack_metadata(
+    http: httpx.AsyncClient, pack_id: str, pack_key: str
+) -> StickerPack:
     """
     Parse the pack manifest, and return
     a `StickerPack` object
@@ -65,12 +69,14 @@ async def get_pack_metadata(http, pack_id, pack_key):
         sticker = Sticker()
         sticker.id = pb_sticker.id
         sticker.emoji = pb_sticker.emoji
-        pack._addsticker(sticker)
+        pack._addsticker(sticker)  # type: ignore
 
     return pack
 
 
-async def get_sticker(http, sticker_id, pack_id, pack_key):
+async def get_sticker(
+    http: httpx.AsyncClient, sticker_id: Optional[int], pack_id: str, pack_key: str
+):
     """
     Return the content of the webp file for a given sticker
     """
