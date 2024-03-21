@@ -14,10 +14,10 @@ setuptools.setup(
     url="https://github.com/romainricard/signalstickers-client",
     packages=setuptools.find_packages(),
     install_requires=[
-        'anyio>=3.0.0,<4.0.0',
-        'httpx>=0.16.1,<=0.24.1',
-        'cryptography>=3.1.1,<4.0.0',
-        'protobuf>=3.13.0,<4.0.0',
+        'anyio>=3.0.0',
+        'httpx>=0.16.1',
+        'cryptography>=3.1.1',
+        'protobuf>=3.13.0',
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
