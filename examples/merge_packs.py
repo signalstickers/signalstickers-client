@@ -34,10 +34,10 @@ async def main():
             if sticker.image_data:  # Sometimes, stickers are HTTP 403 for... reasons
                 nb_stickers += 1
                 new_stick = Sticker()
-                new_stick.id = sticker.id + id_offset
+                new_stick.id = sticker.id + id_offset  # type: ignore
                 new_stick.emoji = sticker.emoji
                 new_stick.image_data = sticker.image_data
-                new_pack._addsticker(new_stick)
+                new_pack._addsticker(new_stick)  # type: ignore
 
         id_offset += nb_stickers
 

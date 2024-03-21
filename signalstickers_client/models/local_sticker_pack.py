@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from typing import List, Optional
 
 import signalstickers_client.classes.Stickers_pb2 as protobuf_stickers
+from signalstickers_client.models.sticker import Sticker
 
 
 class LocalStickerPack:
@@ -11,29 +13,31 @@ class LocalStickerPack:
     """
 
     def __init__(self):
-        self.title = None
-        self.author = None
-        self.stickers = []
-        self.cover = None
+        self.title: Optional[str] = None
+        self.author: Optional[str] = None
+        self.stickers: List[Sticker] = []
+        self.cover: Optional[Sticker] = None
 
     @property
-    def nb_stickers(self):
+    def nb_stickers(self) -> int:
         """
         Return the number of stickers in the pack
         """
         return len(self.stickers)
 
     @property
-    def nb_stickers_with_cover(self):
+    def nb_stickers_with_cover(self) -> int:
         """
         Return the number of stickers in the pack, including the cover
         """
         return len(self.stickers) + 1 if self.cover else len(self.stickers)
 
     @property
-    def manifest(self):
+    def manifest(self) -> bytes:
         manifest = protobuf_stickers.Pack()
+        assert self.title
         manifest.title = self.title
+        assert self.author
         manifest.author = self.author
 
         cover = manifest.cover
@@ -52,7 +56,7 @@ class LocalStickerPack:
 
         return manifest.SerializeToString()
 
-    def _addsticker(self, sticker):
+    def _addsticker(self, sticker: Sticker) -> None:
         """
         Add the binary content (which is a webp image) to
         the `StickerPack`' list of stickers

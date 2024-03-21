@@ -1,7 +1,9 @@
+from typing import Any
+
 from os.path import join, dirname
 
 
-def get_data_from_url(url):
+def get_data_from_url(url: str):
     """
     Depending on the URL, returns the bin data of the requested file
     """
@@ -30,7 +32,7 @@ class MockResponse:
 
     status_code = 200
 
-    def __init__(self, url):
+    def __init__(self, url: str):
         self.content_data = get_data_from_url(url)
 
     @property
@@ -44,17 +46,17 @@ class MockHttpx:
     """
 
     @staticmethod
-    def __init__(*args, **kwargs):
+    def __init__(*args: Any, **kwargs: Any):
         pass
 
     @staticmethod
-    async def __aenter__(*args, **kwargs):
+    async def __aenter__(*args: Any, **kwargs: Any):
         return MockHttpx
 
     @staticmethod
-    async def __aexit__(*args, **kwargs):
+    async def __aexit__(*args: Any, **kwargs: Any):
         pass
 
     @staticmethod
-    async def get(*args, **kwargs):
+    async def get(*args: Any, **kwargs: Any):
         return MockResponse(url=args[0])

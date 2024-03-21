@@ -1,13 +1,21 @@
+import httpx
 from secrets import token_hex
+from typing import Dict, Tuple
 
 import anyio
 
 from signalstickers_client.classes.signalcrypto import encrypt, derive_key
-from signalstickers_client.urls import SERVICE_STICKER_FORM_URL, CDN_BASEURL
 from signalstickers_client.errors import HTTPException, Unauthorized, RateLimited
+from signalstickers_client.models import LocalStickerPack
+from signalstickers_client.urls import SERVICE_STICKER_FORM_URL, CDN_BASEURL
 
 
-async def upload_pack(http, pack, signal_user, signal_password):
+async def upload_pack(
+        http: httpx.AsyncClient,
+        pack: LocalStickerPack,
+        signal_user: str,
+        signal_password: str,
+    ) -> Tuple[str, str]:
     """
     Upload a pack, and return (pack_id, pack_key)
     """
@@ -64,7 +72,7 @@ async def upload_pack(http, pack, signal_user, signal_password):
             for sticker in stickers_list[i : i + 5]:
                 # Encrypt the sticker
                 encrypted_sticker = encrypt(
-                    plaintext=sticker.image_data,
+                    plaintext=sticker.image_data,  # type: ignore
                     aes_key=aes_key,
                     hmac_key=hmac_key,
                 )
@@ -79,7 +87,11 @@ async def upload_pack(http, pack, signal_user, signal_password):
     return pack_attrs["packId"], pack_key
 
 
-async def _upload_cdn(http, cdn_creds, encrypted_data):
+async def _upload_cdn(
+        http: httpx.AsyncClient,
+        cdn_creds: Dict[str, str],
+        encrypted_data: bytes,
+    ):
     """
     Upload an object (manifest or sticker) to the CDN
     """

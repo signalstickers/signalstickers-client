@@ -1,6 +1,7 @@
 import os
 import anyio
 from signalstickers_client import StickersClient
+from signalstickers_client.models import Sticker
 
 
 async def main():
@@ -15,12 +16,12 @@ async def main():
     print(pack.author)  # "Bits of Freedom"
     print(pack.nb_stickers)  # 7
 
-    async def save_sticker(sticker):
+    async def save_sticker(sticker: Sticker):
         async with await anyio.open_file(
             os.path.join("/tmp", "stickersclient", "{}.webp".format(sticker.id)),
             "wb",
         ) as f:
-            await f.write(sticker.image_data)
+            await f.write(sticker.image_data)  # type: ignore
 
     async with anyio.create_task_group() as tg:
         # Saves all stickers in webp format in /tmp/stickersclient in parallel
